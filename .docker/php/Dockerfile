@@ -6,7 +6,6 @@ ARG APPLICATION_NAME=""
 
 # Install opcache or not
 ARG INSTALL_OPCACHE=false
-ARG OPCACHE_MEMORY_CONSUMPTION=256
 
 # Optional, name and ID of the user used inside this container
 # 1000 is the userid in the host when coding under linux (Ubuntu/Debian)
@@ -22,19 +21,16 @@ FROM php:${PHP_VERSION}-fpm
 
 # Install opcache = start ==============================
 ARG INSTALL_OPCACHE
-ARG OPCACHE_MEMORY_CONSUMPTION
 
-# Use arguments to create environment variables that will then
-# be used in the opcache.ini file
-ENV OPCACHE_MEMORY_CONSUMPTION="${OPCACHE_MEMORY_CONSUMPTION}"
-
-RUN echo 'Install OP cache? ${INSTALL_OPCACHE}'; \
+RUN echo 'Install Zend OpCache? ${INSTALL_OPCACHE}'; \
     if [ "$INSTALL_OPCACHE" = "true" ]; then \
     docker-php-ext-configure opcache --enable-opcache \
     && docker-php-ext-install opcache; \
     fi
 
 # Copy opcache configuration (even if the module isn't installed)
+# The ini file contains environment variables so it'll be easy to change
+# settings without the need to rebuild each time the image
 COPY ./.docker/php/conf.d/opcache.ini $PHP_INI_DIR/conf.d/
 # Install opcache = end ==============================
 

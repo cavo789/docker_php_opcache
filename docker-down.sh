@@ -18,7 +18,9 @@ printf '\e[1;32m%-6s\n\n\e[m' "Run docker-compose down..."
 docker-compose down &>/dev/null
 
 # Kill images based on the image name mentionned in the docker-compose.yml file
-APPLICATION_NAME="$(grep "APPLICATION_NAME" .env | cut -d "=" -f 2)"
+APPLICATION_NAME="myDockerApp"
+[ -f .env ] && APPLICATION_NAME="$(grep "APPLICATION_NAME" .env | cut -d "=" -f 2)"
+
 docker image rm "$(docker images | grep "${APPLICATION_NAME}_apache")" &>/dev/null
 docker image rm "$(docker images | grep "${APPLICATION_NAME}_php")" &>/dev/null
 
